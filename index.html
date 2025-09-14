@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
@@ -22,14 +23,302 @@
         .glow {
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
         }
-        .bonus-wheel {
-            background: radial-gradient(circle, #1e40af 0%, #1e3a8a 100%);
+        .mystery-case {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 50%, #1e1b4b 100%);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.7), inset 0 0 20px rgba(147, 197, 253, 0.3);
+            animation: case-pulse 2s infinite ease-in-out;
+            border: 4px solid #3b82f6;
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .mystery-case::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+            transform: rotate(45deg);
+            animation: case-shine 3s infinite;
+            z-index: 1;
+        }
+        
+        .mystery-case::after {
+            content: '?';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+            z-index: 2;
+            animation: question-pulse 1.5s infinite alternate;
+        }
+        
+        @keyframes case-pulse {
+            0% { 
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.7), inset 0 0 20px rgba(147, 197, 253, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(99, 102, 241, 1), inset 0 0 30px rgba(191, 219, 254, 0.6);
+                transform: scale(1.05);
+            }
+            100% { 
+                box-shadow: 0 0 40px rgba(99, 102, 241, 0.8), inset 0 0 25px rgba(191, 219, 254, 0.4);
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes case-shine {
+            0% { transform: translateX(-200%) rotate(45deg); }
+            100% { transform: translateX(200%) rotate(45deg); }
+        }
+        
+        @keyframes question-pulse {
+            0% { 
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+        
+        @keyframes case-opening {
+            0% { 
+                transform: scale(1) rotateY(0deg); 
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+                opacity: 1;
+            }
+            25% { 
+                transform: scale(1.05) rotateY(90deg); 
+                box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
+                opacity: 0.9;
+            }
+            50% {
+                transform: scale(1.2) rotateY(180deg);
+                box-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
+                opacity: 0.8;
+            }
+            75% { 
+                transform: scale(1.35) rotateY(270deg); 
+                box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+                opacity: 0.4;
+            }
+            100% {
+                transform: scale(1.5) rotateY(360deg);
+                box-shadow: 0 0 80px rgba(255, 215, 0, 1);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes prize-reveal {
+            0% {
+                transform: scale(0) rotateY(180deg) translateY(50px);
+                opacity: 0;
+                filter: blur(10px);
+            }
+            30% {
+                transform: scale(1.3) rotateY(120deg) translateY(-10px);
+                opacity: 0.7;
+                filter: blur(2px);
+            }
+            60% {
+                transform: scale(0.9) rotateY(45deg) translateY(5px);
+                opacity: 1;
+                filter: blur(0px);
+            }
+            100% {
+                transform: scale(1) rotateY(0deg) translateY(0px);
+                opacity: 1;
+                filter: blur(0px);
+            }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .case-opening {
+            animation: case-opening 3s ease-in-out forwards;
+            position: relative;
+        }
+        
+        .case-opening::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+            animation: sparkle 0.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .prize-reveal {
+            animation: prize-reveal 2s ease-out forwards, float 3s ease-in-out infinite 2s;
+            position: relative;
+        }
+        
+        .prize-reveal::after {
+            content: '✨';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            animation: sparkle 1s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .mystery-case:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .case-glow {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 
+                        0 0 60px rgba(59, 130, 246, 0.4),
+                        inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        
+        .animate-spin-slow {
+            animation: spin 4s linear infinite;
+        }
+        
+        .animate-bounce-small {
+            animation: bounce-small 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .prize-card {
+            background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            transform: scale(0);
+            opacity: 0;
+        }
+        
+        .prize-card.show {
+            animation: prize-reveal 1s ease-out forwards;
+        }
+        
+        .prize-amount {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #fbbf24, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+            margin-bottom: 1rem;
+        }
+        
+        .prize-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .case-container {
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+        
+        .case-inner {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            transform-style: preserve-3d;
+        }
+        
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+        
+        .prize-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            white-space: nowrap;
+            transform: scale(1.2) translateY(-5px);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Shine effect for wheel */
+        .wheel-shine {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0) 100%);
+            transform: rotate(45deg);
+            pointer-events: none;
+            z-index: 5;
         }
         .btn-gradient {
-            background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+            background: linear-gradient(90deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            background-clip: padding-box;
         }
+        
         .btn-gradient:hover {
-            background: linear-gradient(90deg, #2563eb 0%, #4f46e5 100%);
+            background: linear-gradient(90deg, #2563eb 0%, #4f46e5 50%, #7c3aed 100%);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 35px -5px rgba(59, 130, 246, 0.6), 0 0 20px rgba(139, 92, 246, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-gradient:active {
+            transform: translateY(-1px) scale(1.02);
+            transition: all 0.1s ease;
+        }
+        
+        .btn-gradient::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(60deg, rgba(255,255,255,0) 10%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0) 30%);
+            transform: rotate(30deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
         }
         
         /* Mobile optimizations */
@@ -123,31 +412,36 @@
                 </div>
             </div>
             
-            <div class="wheel-container relative mx-auto w-64 h-64 sm:w-80 sm:h-80 mb-12">
-                <div class="bonus-wheel rounded-full w-full h-full relative overflow-hidden border-4 border-blue-500 glow">
-                    <div id="wheel" class="w-full h-full transition-transform duration-5000 ease-out">
-                        <!-- Wheel segments will be added by JS -->
+            <div class="case-container mb-12">
+                <div class="case-inner">
+                    <div id="mystery-case" class="mystery-case w-full h-full">
+                        <!-- Mystery case content -->
                     </div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="w-16 h-16 rounded-full bg-blue-600 flex items-center justify-center z-10">
-                            <div class="w-12 h-12 rounded-full bg-blue-700 flex items-center justify-center">
-                                <i data-feather="rotate-cw" class="text-white"></i>
-                            </div>
-                        </div>
+                    <div id="prize-display" class="prize-card absolute inset-0 hidden">
+                        <div class="prize-label">Você ganhou:</div>
+                        <div id="prize-amount" class="prize-amount">R$ 0</div>
+                        <div class="text-sm text-gray-300">Bônus será creditado após registro</div>
                     </div>
-                    <div class="absolute top-0 right-1/2 transform translate-x-1/2 -mt-4 w-0 h-0 border-l-8 border-r-8 border-b-16 border-l-transparent border-r-transparent border-b-blue-500"></div>
                 </div>
+                <!-- Enhanced Audio elements for case sounds -->
+                <audio id="case-open-sound" preload="auto" volume="0.7">
+                    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTuR2O/Aeyw" type="audio/wav">
+                </audio>
+                <audio id="prize-reveal-sound" preload="auto" volume="0.8">
+                    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTuR2O/Aeyw" type="audio/wav">
+                </audio>
             </div>
 
-            <button id="spin-btn" class="btn-gradient px-10 py-5 rounded-full font-bold text-xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-110 mb-8 animate-pulse">
-                🔥 GIRE AGORA E GANHE! 🔥
+            <button id="open-case-btn" class="btn-gradient px-10 py-5 rounded-full font-bold text-xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-110 mb-8 animate__animated animate__pulse animate__infinite animate__slow">
+                <i data-feather="gift" class="mr-2"></i>
+                🎁 ABRIR CAIXA MISTERIOSA! 🎁
             </button>
 
-            <div id="result" class="hidden bg-blue-900/50 backdrop-blur-sm p-6 rounded-xl max-w-md mx-auto border border-blue-400" data-aos="fade-up">
-                <h3 class="text-2xl font-bold mb-2">Parabéns!</h3>
-                <p class="text-xl mb-4">Você ganhou: <span id="prize" class="font-bold text-blue-300"></span></p>
+            <div id="result" class="hidden bg-gradient-to-r from-blue-900 to-indigo-900 backdrop-blur-sm p-6 rounded-xl max-w-md mx-auto border-2 border-blue-400 shadow-xl" data-aos="fade-up">
+                <h3 class="text-2xl font-bold mb-2 text-white">Parabéns!</h3>
+                <p class="text-xl mb-4">Você ganhou: <span id="prize" class="font-bold text-blue-300 text-shadow"></span></p>
                 <p class="text-sm text-gray-300 mb-4">O bônus será creditado após registro e primeiro depósito</p>
-                <a href="https://lkrh.pro/d53b28" class="btn-gradient px-6 py-3 rounded-full font-bold text-sm inline-block">Registrar-se</a>
+                <a href="https://lkrh.pro/d53b28" class="btn-gradient px-6 py-3 rounded-full font-bold text-sm inline-block hover:scale-105 transition-transform">Registrar-se</a>
             </div>
         </section>
 
@@ -346,80 +640,108 @@
         // Wheel logic
         document.addEventListener('DOMContentLoaded', function() {
             const prizes = [
-                { text: "R$ 5.000", value: 5000, color: "#3b82f6" },
-                { text: "R$ 7.000", value: 7000, color: "#6366f1" },
-                { text: "R$ 9.000", value: 9000, color: "#8b5cf6" },
-                { text: "R$ 10.000", value: 10000, color: "#ec4899" },
-                { text: "R$ 12.000", value: 12000, color: "#f43f5e" },
-                { text: "R$ 15.000", value: 15000, color: "#f97316" },
-                { text: "R$ 15.000", value: 15000, color: "#10b981" },
-                { text: "Sorte!", value: "luck", color: "#06b6d4" }
+                { text: "5.000", value: 5000, color: "#3b82f6", icon: "dollar-sign" },
+                { text: "7.000", value: 7000, color: "#6366f1", icon: "dollar-sign" },
+                { text: "9.000", value: 9000, color: "#8b5cf6", icon: "dollar-sign" },
+                { text: "10.000", value: 10000, color: "#ec4899", icon: "dollar-sign" },
+                { text: "12.000", value: 12000, color: "#f43f5e", icon: "dollar-sign" },
+                { text: "15.000", value: 15000, color: "#f97316", icon: "star", special: true },
+                { text: "15.000", value: 15000, color: "#10b981", icon: "star", special: true }
             ];
 
-            const wheel = document.getElementById('wheel');
-            const spinBtn = document.getElementById('spin-btn');
+            const mysteryCase = document.getElementById('mystery-case');
+            const openCaseBtn = document.getElementById('open-case-btn');
             const result = document.getElementById('result');
             const prizeText = document.getElementById('prize');
+            const prizeDisplay = document.getElementById('prize-display');
+            const prizeAmount = document.getElementById('prize-amount');
+            const caseOpenSound = document.getElementById('case-open-sound');
+            const prizeRevealSound = document.getElementById('prize-reveal-sound');
             
-            // Create wheel segments
-            const segmentAngle = 360 / prizes.length;
-            let html = '';
+            // Initialize mystery case with question mark
+            mysteryCase.innerHTML = `
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-8xl animate-pulse">❓</div>
+                </div>
+            `;
             
-            prizes.forEach((prize, index) => {
-                const angle = index * segmentAngle;
-                const skew = 90 - segmentAngle;
+            // Initialize Feather Icons
+            feather.replace();
+            
+            // Case opening logic
+            openCaseBtn.addEventListener('click', function() {
+                if (openCaseBtn.disabled) return;
                 
-                html += `
-                    <div class="absolute w-1/2 h-1/2 origin-bottom-right" 
-                         style="transform: rotate(${angle}deg) skewY(${skew}deg); 
-                                background: ${prize.color}; 
-                                overflow: hidden;">
-                        <div class="absolute w-full h-full transform -skewY(${skew}deg) rotate(${segmentAngle/2}deg) 
-                                    flex items-center justify-center text-white font-bold text-sm"
-                             style="left: 0; top: 0;">
-                            ${prize.text}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            wheel.innerHTML = html;
-            
-            // Spin wheel
-            spinBtn.addEventListener('click', function() {
-                if (spinBtn.disabled) return;
+                openCaseBtn.disabled = true;
+                openCaseBtn.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                openCaseBtn.style.opacity = '0';
+                openCaseBtn.style.transform = 'scale(0.8)';
                 
-                spinBtn.disabled = true;
+                // Полностью удаляем кнопку после анимации
+                setTimeout(() => {
+                    openCaseBtn.remove();
+                }, 500);
                 result.classList.add('hidden');
+                prizeDisplay.classList.add('hidden');
                 
-                // Random prize (only between 5000 and 15000)
-                const minPrizeIndex = 0; // 5000
-                const maxPrizeIndex = 6; // 15000
-                const prizeIndex = minPrizeIndex + Math.floor(Math.random() * (maxPrizeIndex - minPrizeIndex + 1));
+                // Play case opening sound
+                caseOpenSound.play().catch(() => {});
+                
+                // Add opening animation to case
+                mysteryCase.classList.add('case-opening');
+                
+                // Random prize selection (all prizes are between 5000 and 15000)
+                const prizeIndex = Math.floor(Math.random() * prizes.length);
                 const prize = prizes[prizeIndex];
                 
-                // Adjust prize text if it's 20000 to show 15000 instead
-                const displayPrize = prize.text;
-                
-                // Calculate rotation (10 full rotations + prize angle for longer spin)
-                const rotation = 3600 + (360 - (prizeIndex * segmentAngle + segmentAngle/2));
-                
-                // Apply rotation with smoother easing
-                wheel.style.transition = 'transform 7s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
-                wheel.style.transform = `rotate(${rotation}deg)`;
-                
-                // Show result exactly when animation ends
-                wheel.addEventListener('transitionend', function showResult() {
-                    prizeText.textContent = displayPrize;
+                // Show opening animation for 3 seconds
+                setTimeout(() => {
+                    // Hide question mark and show prize
+                    mysteryCase.innerHTML = `
+                        <div class="flex items-center justify-center h-full prize-reveal">
+                            <div class="text-center">
+                                <i data-feather="${prize.icon}" class="w-16 h-16 mx-auto mb-4 text-yellow-400"></i>
+                                <div class="text-2xl font-bold text-white">R$ ${prize.text}</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Re-initialize feather icons for the new content
+                    feather.replace();
+                    
+                    // Play prize reveal sound
+                    prizeRevealSound.play().catch(() => {});
+                    
+                    // Remove opening animation and add reveal animation
+                    mysteryCase.classList.remove('case-opening');
+                    mysteryCase.classList.add('prize-reveal');
+                    
+                    // Show prize display
+                    prizeAmount.textContent = `R$ ${prize.text}`;
+                    prizeDisplay.classList.remove('hidden');
+                    
+                    // Show result section
+                    prizeText.textContent = `R$ ${prize.text}`;
                     result.classList.remove('hidden');
-                    spinBtn.disabled = false;
                     
                     // Scroll to result
                     result.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     
-                    // Remove the event listener so it doesn't fire multiple times
-                    wheel.removeEventListener('transitionend', showResult);
-                }, { once: true });
+                    // Re-enable button after 2 more seconds
+                    setTimeout(() => {
+                        // Кнопка остается скрытой после использования
+                        
+                        // Reset case for next opening
+                        mysteryCase.classList.remove('prize-reveal');
+                        mysteryCase.innerHTML = `
+                            <div class="flex items-center justify-center h-full">
+                                <div class="text-8xl animate-pulse">❓</div>
+                            </div>
+                        `;
+                        prizeDisplay.classList.add('hidden');
+                    }, 2000);
+                    
+                }, 3000);
             });
         });
     </script>
